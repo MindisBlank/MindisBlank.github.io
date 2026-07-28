@@ -1,0 +1,17 @@
+---
+layout: default
+title: Blog
+permalink: /blog/
+---
+<h1>Blog</h1>
+<ul class="feed">
+  {% for post in site.posts %}
+  <li class="feed-item">
+    <div class="feed-meta">
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+    </div>
+    <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+    <p>{{ post.summary | default: post.excerpt | strip_html | truncate: 140 }}</p>
+  </li>
+  {% endfor %}
+</ul>

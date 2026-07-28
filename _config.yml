@@ -1,3 +1,45 @@
-theme: jekyll-theme-minimal
+# Site settings
 title: Jason's homepage
-description: Bookmark this to keep an eye on my project updates!
+description: Projects, writing, and other things I want to share.
+url: "https://MindisBlank.github.io" # change to your GitHub Pages URL
+baseurl: "" # leave empty for username.github.io; set to "/repo-name" for project sites
+
+author:
+  name: Jason Quinn
+  email: jaquinn08@gmail.com
+
+# Social links (used in About page and footer)
+social:
+  github: "https://github.com/MindisBlank"
+  linkedin: "https://linkedin.com/in/-jaq-"
+  # add more as needed
+
+# CV file (place your PDF at assets/cv.pdf)
+cv: /assets/cv.pdf
+
+# Build settings
+markdown: kramdown
+permalink: /blog/:year/:month/:title/
+
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: project
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor

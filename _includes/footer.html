@@ -1,0 +1,10 @@
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>© {{ site.time | date: "%Y" }} {{ site.author.name }}</p>
+    <p class="footer-links">
+      {% if site.social.github %}<a href="{{ site.social.github }}">GitHub</a>{% endif %}
+      {% if site.social.linkedin %}<a href="{{ site.social.linkedin }}">LinkedIn</a>{% endif %}
+      <a href="{{ site.cv | relative_url }}">CV</a>
+    </p>
+  </div>
+</footer>

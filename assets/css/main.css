@@ -1,0 +1,277 @@
+/* ---------------------------------------------------------------
+   Icelandic palette: paper, basalt, moss, lichen yellow, glacier
+   --------------------------------------------------------------- */
+:root {
+  --paper: #f7f6f1;        /* off-white, like drift snow on paper */
+  --ink: #1d1f1d;          /* basalt black */
+  --stone: #5c6058;        /* weathered gray-green */
+  --moss: #40614c;         /* moss green */
+  --moss-dark: #2e4a39;
+  --lichen: #c9a227;       /* ochre / lichen yellow */
+  --glacier: #4f7d99;      /* glacier blue */
+  --glacier-light: #a9c4d4;
+  --line: #dcdad2;         /* hairline borders */
+  --max-width: 46rem;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.25rem;
+}
+
+/* ------------------------------ Header ------------------------ */
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1.1rem;
+  padding-bottom: 1.1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Geometric mark — three shapes that snap into place on load */
+.mark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+}
+
+.mark-shape { display: inline-block; }
+
+.mark-tri {
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 18px solid var(--moss);
+}
+
+.mark-circle {
+  width: 16px;
+  height: 8px;
+  border-radius: 16px 16px 0 0;
+  background: var(--glacier);
+}
+
+.mark-square {
+  width: 11px;
+  height: 11px;
+  background: var(--lichen);
+}
+
+/* Snap-in animation: staggered, quick, with a slight overshoot.
+   Runs once per page load. */
+@media (prefers-reduced-motion: no-preference) {
+  .mark-shape {
+    opacity: 0;
+    animation: snap-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+  }
+  .mark-tri    { animation-delay: 0.05s; transform: translateY(-14px); }
+  .mark-circle { animation-delay: 0.16s; transform: translateY(10px); }
+  .mark-square { animation-delay: 0.27s; transform: translateX(12px) rotate(45deg); }
+
+  @keyframes snap-in {
+    to { opacity: 1; transform: translate(0, 0) rotate(0); }
+  }
+
+  /* Page content fades up subtly, no scroll trickery */
+  main.container {
+    animation: rise 0.4s ease-out 0.1s backwards;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.site-nav a {
+  color: var(--stone);
+  text-decoration: none;
+  margin-left: 1.4rem;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.site-nav a:hover { color: var(--ink); border-color: var(--glacier-light); }
+.site-nav a.active { color: var(--ink); border-color: var(--lichen); }
+
+/* ------------------------------ Content ----------------------- */
+main.container { padding-top: 2.5rem; padding-bottom: 3.5rem; min-height: 60vh; }
+
+h1, h2, h3 { line-height: 1.25; letter-spacing: -0.01em; }
+h1 { font-size: 1.9rem; margin: 0 0 1.2rem; }
+h2 { font-size: 1.35rem; margin-top: 2.2rem; }
+
+a { color: var(--glacier); }
+a:hover { color: var(--moss); }
+
+hr { border: none; border-top: 1px solid var(--line); margin: 2.5rem 0; }
+
+img { max-width: 100%; height: auto; border-radius: 4px; }
+
+blockquote {
+  margin: 1.5rem 0;
+  padding: 0.2rem 1.2rem;
+  border-left: 3px solid var(--moss);
+  color: var(--stone);
+}
+
+code {
+  background: #ecebe4;
+  padding: 0.15em 0.35em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre {
+  background: #23251f;
+  color: #e8e6dc;
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+pre code { background: none; padding: 0; color: inherit; }
+
+/* ------------------------- Home: recent feed ------------------ */
+.intro { margin-bottom: 2.5rem; }
+.intro p { color: var(--stone); max-width: 34rem; }
+
+.section-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--stone);
+  margin: 0 0 1rem;
+}
+
+.feed { list-style: none; margin: 0; padding: 0; }
+
+.feed-item {
+  display: block;
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.feed-item:last-child { border-bottom: 1px solid var(--line); }
+
+.feed-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-size: 0.82rem;
+  color: var(--stone);
+  margin-bottom: 0.25rem;
+}
+
+.tag {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+}
+
+.tag-post    { background: #e3ecf2; color: var(--glacier); }
+.tag-project { background: #e2ebe4; color: var(--moss); }
+
+.feed-item h3 { margin: 0 0 0.2rem; font-size: 1.15rem; }
+.feed-item h3 a { color: var(--ink); text-decoration: none; }
+.feed-item h3 a:hover { color: var(--moss); }
+.feed-item p { margin: 0; color: var(--stone); font-size: 0.95rem; }
+
+/* ------------------------- Post / project pages ---------------- */
+.page-meta { color: var(--stone); font-size: 0.9rem; margin-bottom: 2rem; }
+.page-meta .tag { margin-right: 0.5rem; }
+
+/* --------------------------- About ----------------------------- */
+.about-header {
+  display: flex;
+  gap: 1.8rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.about-photo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+.about-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.8rem; }
+
+.about-links a {
+  text-decoration: none;
+  font-weight: 500;
+  color: var(--moss);
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.85rem;
+  border-radius: 4px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.about-links a:hover { border-color: var(--moss); background: #eef1ea; }
+
+/* --------------------------- Footer ---------------------------- */
+.site-footer {
+  border-top: 1px solid var(--line);
+  color: var(--stone);
+  font-size: 0.9rem;
+}
+
+.footer-inner {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 1.2rem;
+  padding-bottom: 1.6rem;
+}
+
+.footer-links a { color: var(--stone); margin-left: 1rem; }
+.footer-links a:first-child { margin-left: 0; }
+.footer-links a:hover { color: var(--moss); }
+
+/* --------------------------- Small screens --------------------- */
+@media (max-width: 540px) {
+  .header-inner { flex-direction: column; gap: 0.7rem; align-items: flex-start; }
+  .site-nav a { margin-left: 0; margin-right: 1.2rem; }
+}

@@ -1,0 +1,18 @@
+---
+layout: default
+title: Projects
+permalink: /projects/
+---
+<h1>Projects</h1>
+{% assign projects = site.projects | sort: "date" | reverse %}
+<ul class="feed">
+  {% for project in projects %}
+  <li class="feed-item">
+    <div class="feed-meta">
+      <time datetime="{{ project.date | date_to_xmlschema }}">{{ project.date | date: "%B %Y" }}</time>
+    </div>
+    <h3><a href="{{ project.url | relative_url }}">{{ project.title }}</a></h3>
+    <p>{{ project.summary | default: project.excerpt | strip_html | truncate: 140 }}</p>
+  </li>
+  {% endfor %}
+</ul>

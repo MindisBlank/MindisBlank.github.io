@@ -1,0 +1,28 @@
+---
+layout: default
+---
+<section class="intro">
+  <h1>Hi, I'm {{ site.author.name }}.</h1>
+  <p>{{ site.description }} More <a href="{{ '/about/' | relative_url }}">about me</a>.</p>
+</section>
+
+<section>
+  <p class="section-label">Recently added</p>
+  {% assign items = site.posts | concat: site.projects | sort: "date" | reverse %}
+  <ul class="feed">
+    {% for item in items limit: 6 %}
+    <li class="feed-item">
+      <div class="feed-meta">
+        {% if item.collection == "projects" %}
+          <span class="tag tag-project">Project</span>
+        {% else %}
+          <span class="tag tag-post">Blog</span>
+        {% endif %}
+        <time datetime="{{ item.date | date_to_xmlschema }}">{{ item.date | date: "%B %-d, %Y" }}</time>
+      </div>
+      <h3><a href="{{ item.url | relative_url }}">{{ item.title }}</a></h3>
+      <p>{{ item.summary | default: item.excerpt | strip_html | truncate: 140 }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
