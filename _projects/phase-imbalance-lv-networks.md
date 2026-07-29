@@ -5,15 +5,13 @@ summary: "My master's thesis at DTU, done with Veitur in Reykjavík. Finding low
 links:
   - name: Thesis (PDF)
     url: /assets/thesis-jason-quinn-2026.pdf
-  - name: Code
-    url: https://github.com/MindisBlank/Jasonaq_thesis
 ---
 
 *Master's thesis, DTU Wind & Energy Systems, in collaboration with Veitur. Supervised by Kai Heussen (DTU) and Corey Harpe (Veitur). April 2026.*
 
 An electrician wiring an apartment building picks a phase. Nobody writes down which one. Do that a few hundred thousand times across a city and you get low-voltage networks where one phase quietly carries twice what its neighbours do.
 
-That costs you twice. Resistive loss goes with the square of the current, so moving load from a light phase onto a heavy one always burns more copper than it saves. And the neutral, which sits at zero when the three phases are even, picks up a return current that does no work at all. Then there is the capacity problem, which is arguably worse: a cable is rated by its hottest phase, so an uneven feeder hits its thermal limit while a third of its capacity is still sitting idle on the phases nobody loaded.
+That costs you twice. Resistive loss goes with the square of the current, so moving load from a light phase onto a heavy one always burns more copper than it saves. And the neutral, which sits at zero when the three phases are even, picks up a return current that does no work at all. Then there is the capacity problem, which is arguably worse: a cable is rated by its highest loaded phase, so an uneven feeder hits its thermal limit while a third of its capacity is still sitting idle on the phases nobody loaded.
 
 ![Balanced versus imbalanced loading at the same total current](/assets/images/thesis/01-balanced-vs-imbalanced.png)
 *Same total current, both cases. On the right, phase A is at the limit while B and C have room to spare. The cable is full.*
@@ -82,6 +80,19 @@ The other one I could not fix at all. The multi-channel substation meters were w
 
 That one wiring decision, made years before I turned up, set the spatial resolution of everything I did afterwards. I can tell you a substation is unbalanced. I can't tell you which of its feeders is responsible.
 
+### What all of that was for
+
+Here is what falls out the other end.
+
+![Network model of one substation, built from GIS connectivity and cable data](/assets/images/thesis/07-network-topology-670sp1.png)
+*One 800 kVA substation as the simulation sees it: 125 cable segments, 122 nodes, 268 connected meters. Red square is the transformer, blue diamonds are junction cabinets, green dots are connection points. Purple is feeder trunk, green is distribution cable between cabinets, orange is service cable to the customer. Positions are a spring layout, not geography, so read it as connectivity and not as a map.*
+
+That picture is the whole point of the previous four sections. Every node in it came from GIS connectivity records, every edge carries a cable type and a length pulled from the same export, every resistance was assigned from conductor tables because the GIS did not hold electrical parameters, and every green dot has a load profile attached to it that came out of the smart meter data after the corrections above. None of those datasets were built to be joined to each other. Getting them into one graph that solves is most of what I actually did for six months.
+
+The shape of it matters more than I expected going in. One transformer, a handful of trunk cables, then it fans out fast into cabinets that each serve a dozen or so customers. Imbalance introduced at the far edge of that tree, where the single-phase connections live, comes all the way back down the trunk as neutral current.
+
+But the damage does not spread evenly on the way. Losses and thermal limits are per segment, and these 125 segments have very little in common with each other. The trunk leaving the transformer carries everything the substation serves. A service cable feeding one apartment carries almost nothing, and is thin enough that it feels what it does carry. Two substations can show the same phase split at the busbar and be in completely different trouble depending on what the tree behind them looks like and how hard it is being pushed. That is the question the capacity results answer later, and it only becomes askable once the network exists as a graph with real lengths and cross-sections in it.
+
 ## The method
 
 ### Measuring imbalance
@@ -117,10 +128,10 @@ A ranking tells you where to look but not what you are looking at. For each shor
 
 This is the part I would have liked more time for. For every fifteen-minute interval I solved the network twice with a three-phase power flow: once with the measured phase split, once with the same total load spread evenly. Identical load, identical topology, the only difference is the balance. Subtract, and what is left is the cost of the imbalance and nothing else.
 
-Loss accounting is the sum over cable segments of (Ia² + Ib² + Ic² + In²) times resistance times length. The neutral term is the whole point. It is exactly zero in the balanced run.
+Loss accounting is the sum over cable segments of (Ia2 + Ib2 + Ic2 + In2) times resistance times length. The neutral term is the whole point. It is exactly zero in the balanced run.
 
 ![Losses over one month, split into phase and neutral](/assets/images/thesis/08-loss-decomposition-670sp1.png)
-*Grey is total loss under the measured case. Blue and orange are the extra loss caused by imbalance, split into phase conductors and neutral. The orange is energy that simply would not exist if the load were even.*
+*The same substation as the network model above, over September. Grey is total loss under the measured case. Blue and orange are the extra loss caused by imbalance, split into phase conductors and neutral. The orange is energy that simply would not exist if the load were even.*
 
 The judgement calls, in case anyone wants to argue with them:
 
@@ -147,7 +158,23 @@ The tail is the interesting part. Nine substations out of 80 are chronically unb
 
 ![Reinforcement deferral under two growth scenarios](/assets/images/thesis/17-reinforcement-deferral.png)
 
-The skew matters more than the average here. Half the segments gain under 6.5 points and a handful gain over 30, so a re-phasing campaign aimed at the worst few captures most of what's available. It's a short list, not a network-wide programme.
+### Every number above is an average, and averages hide this problem
+
+That 7.9 point figure is not describing any actual cable. Half the 185 segments gain under 6.5 points, a handful gain over 30, and one gains 40.1. A re-phasing campaign aimed at the worst few captures most of what is available, so it's a short list rather than a network-wide programme, and you can only see that by looking at the distribution instead of the mean.
+
+The same thing happens one level up. The fleet-wide average imbalance is 9.5%, which sounds like a network with no problem worth investigating. The substation running at 85% for three straight months is inside that average and barely moves it. So is every other case in this write-up.
+
+That is why the screening is built the way it is: nothing gets averaged until after the ranking, and the diagnostics use exceedance curves rather than summary statistics. Aggregate first and you produce a number that is technically correct and hides every case worth finding. If you take one thing from this work, take that. Phase imbalance is a tail problem at every scale you look at it, across the fleet, across a substation's feeders, and across the segments of a single feeder.
+
+### A bad split is not the same thing as a problem
+
+The six substations that went through the full analysis were all flagged as chronically imbalanced by the same screening. Their additional losses over the same month ranged from 1.7 kWh to 400.9 kWh. Same shortlist, more than two hundred times apart in what they actually cost.
+
+The one at the bottom of that range has no single-phase customers at all and sits at low load. Its split is real and persistent, and correcting it would recover nothing anyone would notice. The one at the top is a large residential feeder where 90% of the connections are single-phase.
+
+This turns up again in the two case studies below. The most extreme split in the entire dataset, 90/5/5, produces a 48.3% loss increase. A far milder 43/40/17 split produces 67.6%. Loss scales with the square of current, so severity of the split is only one of the three terms that matter, and the other two are how much current is flowing and what the cable network behind the meter looks like.
+
+The practical version: a ranking by imbalance alone gives you a work list sorted by the wrong key. It is the right tool for deciding where to look, and the wrong tool for deciding where to dig.
 
 ### Two substations worth looking at
 
@@ -169,7 +196,7 @@ I am not going to pretend I know what causes that. A split that extreme does not
 
 It doesn't really matter which it is, though. If the split is real, it's a large and cheap thing to fix. If it's a sensor fault, it's a metering problem worth a site visit. Either way this is exactly the kind of thing you want a screening tool to drag into view.
 
-One result I didn't expect: that extreme substation shows a 48.3% loss increase, lower than the 67.6% at the 43/40/17 one. A worse split doesn't automatically mean a worse penalty, because the absolute load and the network behind it matter just as much. Worth remembering before anyone ranks substations by imbalance alone and calls it a priority list.
+And it is still the substation that comes second on losses, not first, despite having by far the worst split in the dataset. The one before it is bigger, busier, and has more cable behind it.
 
 ## What I would do differently
 
@@ -187,4 +214,4 @@ Fifteen-minute averages also hide transients. A car charger ramping up on a sing
 
 To Kai Heussen, whose questions had a habit of leaving me thinking for hours after a twenty-minute meeting. To Corey Harpe and the team at Veitur, who provided the data and then patiently answered a great many questions about why it looked the way it did. And to the 3PhaseInsight project at DTU for the wider context.
 
-The full thesis is linked at the top, and the code is on GitHub. If you want the derivations, the full results tables, or the parts I glossed over here, they are all in there.
+The full thesis is linked at the top. If you want the derivations, the full results tables, or the parts I glossed over here, they are all in there.
