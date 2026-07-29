@@ -15,7 +15,7 @@ An electrician wiring an apartment building picks a phase. Nobody writes down wh
 
 That costs you twice. Resistive loss goes with the square of the current, so moving load from a light phase onto a heavy one always burns more copper than it saves. And the neutral, which sits at zero when the three phases are even, picks up a return current that does no work at all. Then there is the capacity problem, which is arguably worse: a cable is rated by its hottest phase, so an uneven feeder hits its thermal limit while a third of its capacity is still sitting idle on the phases nobody loaded.
 
-![Balanced versus imbalanced loading at the same total current](/assets/images/thesis/phase-imbalance/01-balanced-vs-imbalanced.png)
+![Balanced versus imbalanced loading at the same total current](/assets/images/thesis/01-balanced-vs-imbalanced.png)
 *Same total current, both cases. On the right, phase A is at the limit while B and C have room to spare. The cable is full.*
 
 Veitur has smart meters at roughly 160,000 customers and power quality monitors in 88 substations, so in principle the data to measure all of this already exists. In practice, most of my thesis went on getting those two datasets to agree about anything at all.
@@ -48,12 +48,12 @@ Theft was easy to dismiss. The gaps were large, persistent, and showed up on man
 
 So I plotted substation current against smart meter current for each substation and fitted a line. Incomplete coverage gives you a poor fit with scatter. A wrong ratio gives you a tight fit with the wrong slope. That is exactly what several substations showed.
 
-![Substation current against smart meter current, before correction](/assets/images/thesis/phase-imbalance/04-ct-scatter-before.png)
+![Substation current against smart meter current, before correction](/assets/images/thesis/04-ct-scatter-before.png)
 *Each panel is one substation. The dashed line is 1:1. A tight fit with a slope of 1.72 is not a coverage problem.*
 
 Then I pulled the configured ratios off the server the meters report to and checked them against the transformer ratings in the GIS. Three substations were programmed at 2600/5, 1600/5 and 2250/5 against transformers that all needed 1200/5. Fixing the ratios moved the slopes from 1.72, 1.10 and 1.56 down to 0.80, 0.82 and 0.83, which is about where incomplete smart meter coverage should leave them.
 
-![The same substations after correcting the ratios](/assets/images/thesis/phase-imbalance/05-ct-scatter-after.png)
+![The same substations after correcting the ratios](/assets/images/thesis/05-ct-scatter-after.png)
 *Same substations, corrected. Correctly configured ones did not move.*
 
 If you install substation monitoring without a step that checks the configured ratio against the transformer it's sitting on, you end up with measurements that are wrong by a constant factor and internally consistent enough that nothing looks broken. Every number downstream inherits the error and nobody notices.
@@ -64,7 +64,7 @@ One substation stayed wrong after correction. Configured ratio looked fine, slop
 
 The next problem has no clean fix. L1 on one smart meter is not the same physical conductor as L1 on the meter next door, and neither necessarily matches L1 at the substation. Sum up the meters under a substation and the total current tracks the substation reading nicely. The split across the three phases does not resemble it at all.
 
-![Smart meter phase currents against substation phase currents for the same substation](/assets/images/thesis/phase-imbalance/03-phase-label-mismatch.png)
+![Smart meter phase currents against substation phase currents for the same substation](/assets/images/thesis/03-phase-label-mismatch.png)
 *Same substation, same two days. The totals agree. The per-phase split does not.*
 
 So the per-phase picture has to come from the substation meters, and the smart meters only enter as a scaled total. Correcting the labels properly means running a phase identification algorithm on every meter, which is its own research problem and was never going to fit in the time I had.
@@ -77,7 +77,7 @@ The substation meters timestamp their samples with a bit of drift: 10:01.023 whe
 
 The other one I could not fix at all. The multi-channel substation meters were wired to monitor individual outgoing cables, but only on L1, and the metadata mapping each input to a specific feeder was gone.
 
-![How the multi-channel meters were wired](/assets/images/thesis/phase-imbalance/02-umg801-wiring-limitation.png)
+![How the multi-channel meters were wired](/assets/images/thesis/02-umg801-wiring-limitation.png)
 *The master unit sees all three phases at the busbar. The slaves see one phase each of four different outgoing cables.*
 
 That one wiring decision, made years before I turned up, set the spatial resolution of everything I did afterwards. I can tell you a substation is unbalanced. I can't tell you which of its feeders is responsible.
@@ -96,7 +96,7 @@ It's bounded between 0 and 1, and whichever pair produced the maximum tells you 
 
 ### Stage one: screen everything
 
-![The screening pipeline](/assets/images/thesis/phase-imbalance/06-screening-pipeline.png)
+![The screening pipeline](/assets/images/thesis/06-screening-pipeline.png)
 
 Pull every substation meter, normalise the channel naming (some devices label phases L1/L2/L3, others Input01/02/03), snap onto a fifteen-minute grid, quality check, compute the ratio. Fixed study window of August to October 2025, no manual exclusions, no random steps. Same inputs give the same outputs.
 
@@ -104,13 +104,13 @@ One filter matters: only timestamps where total current is at least 90 A. At low
 
 Averaging each substation over the full three months and ranking gives the shortlist. Nine of 80 sit above 15%. One sits at 85%.
 
-![Top 30 substations ranked by average imbalance](/assets/images/thesis/phase-imbalance/11-top30-sp-ranking.png)
+![Top 30 substations ranked by average imbalance](/assets/images/thesis/11-top30-sp-ranking.png)
 
 ### Stage two: characterise the shortlist
 
 A ranking tells you where to look but not what you are looking at. For each shortlisted substation I generated the imbalance over time, coloured by which phase pair was responsible, plus an exceedance curve: for any threshold, what fraction of the three months sat at or above it.
 
-![Exceedance curves for the shortlisted substations](/assets/images/thesis/phase-imbalance/12-exceedance-curves.png)
+![Exceedance curves for the shortlisted substations](/assets/images/thesis/12-exceedance-curves.png)
 *The curve separates a substation that is mildly unbalanced all the time from one that is fine except for occasional excursions. An average cannot do that.*
 
 ### Stage three: put a number on it
@@ -119,7 +119,7 @@ This is the part I would have liked more time for. For every fifteen-minute inte
 
 Loss accounting is the sum over cable segments of (Ia² + Ib² + Ic² + In²) times resistance times length. The neutral term is the whole point. It is exactly zero in the balanced run.
 
-![Losses over one month, split into phase and neutral](/assets/images/thesis/phase-imbalance/08-loss-decomposition-670sp1.png)
+![Losses over one month, split into phase and neutral](/assets/images/thesis/08-loss-decomposition-670sp1.png)
 *Grey is total loss under the measured case. Blue and orange are the extra loss caused by imbalance, split into phase conductors and neutral. The orange is energy that simply would not exist if the load were even.*
 
 The judgement calls, in case anyone wants to argue with them:
@@ -138,14 +138,14 @@ The tail is the interesting part. Nine substations out of 80 are chronically unb
 
 **Cable losses went up 57% on average.** In absolute terms, 677.6 kWh over a single month across six substations, and the majority of the extra is dissipated in the neutral, where none of it does any work.
 
-![Loss increase by substation](/assets/images/thesis/phase-imbalance/13-loss-increase-by-sp.png)
+![Loss increase by substation](/assets/images/thesis/13-loss-increase-by-sp.png)
 
-![Losses split into phase and neutral, balanced against unbalanced](/assets/images/thesis/phase-imbalance/14-loss-breakdown-phase-vs-neutral.png)
+![Losses split into phase and neutral, balanced against unbalanced](/assets/images/thesis/14-loss-breakdown-phase-vs-neutral.png)
 *Solid bars are the balanced counterfactual, faded bars the measured case. Orange is neutral loss, which the balanced case does not have.*
 
 **Rebalancing frees an average of 7.9 percentage points of cable capacity**, across 185 segments. Median 6.5, with a long tail and one segment at 40.1. Converted to time, that is 16.1 years of deferred reinforcement at 3.4% load growth, 14.1 years at 3.9%.
 
-![Reinforcement deferral under two growth scenarios](/assets/images/thesis/phase-imbalance/17-reinforcement-deferral.png)
+![Reinforcement deferral under two growth scenarios](/assets/images/thesis/17-reinforcement-deferral.png)
 
 The skew matters more than the average here. Half the segments gain under 6.5 points and a handful gain over 30, so a re-phasing campaign aimed at the worst few captures most of what's available. It's a short list, not a network-wide programme.
 
@@ -153,16 +153,16 @@ The skew matters more than the average here. Half the segments gain under 6.5 po
 
 The largest on the shortlist has an 800 kVA transformer, 79 cable segments and 326 connected meters, 90% of them single-phase. Its long-run split is 43/40/17. The same phase pair is responsible 73% of the time across twelve weeks, and that consistency is the finding: if the imbalance came from a big intermittent load switching on and off, the culprit pair would wander. It does not. This is a fixed allocation of single-phase customers, decided at installation, and it will sit there until someone moves it.
 
-![Imbalance over the study window](/assets/images/thesis/phase-imbalance/18-579sp1-cur-timeseries.png)
+![Imbalance over the study window](/assets/images/thesis/18-579sp1-cur-timeseries.png)
 
-![Phase currents over the same period](/assets/images/thesis/phase-imbalance/19-579sp1-phase-currents.png)
+![Phase currents over the same period](/assets/images/thesis/19-579sp1-phase-currents.png)
 *Two phases run 200-350 A and peak past 450. The third rarely clears 150.*
 
 Losses come to 993.9 kWh over the month against 593 kWh balanced, so 400.9 kWh of pure imbalance penalty, a 67.6% increase. It also has the most recoverable capacity of the six at 12 points on average.
 
 The other one is stranger. Its split is 90/5/5, with the imbalance ratio locked between 82 and 90% for three straight months.
 
-![Phase currents at the extreme case](/assets/images/thesis/phase-imbalance/21-1299sp1-phase-currents.png)
+![Phase currents at the extreme case](/assets/images/thesis/21-1299sp1-phase-currents.png)
 *One phase carries essentially everything. The other two hover near zero for three months.*
 
 I am not going to pretend I know what causes that. A split that extreme does not come from customers gradually accumulating on one phase. It is more likely a wiring or documentation error, or a fault in the meter itself. I checked it against the aggregated smart meters and found nothing that would justify throwing the reading out, so I kept it.
