@@ -125,7 +125,7 @@ body {
 }
 
 .site-nav a:hover { color: var(--ink); border-color: var(--glacier-light); }
-.site-nav a.active { color: var(--ink); border-color: var(--lichen); }
+.site-nav a.active { color: var(--ink); border-color: var(--moss); }
 
 /* ------------------------------ Content ----------------------- */
 main.container { padding-top: 2.5rem; padding-bottom: 3.5rem; min-height: 60vh; }
