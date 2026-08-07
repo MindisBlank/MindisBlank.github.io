@@ -5,8 +5,6 @@ date: 2025-08-07
 summary: "A summer internship, a 140-page standards PDF, and what happened when I tried to put a retrieval-augmented LLM in front of it."
 ---
 
-# My attempt at deploying a RAG model and what I learnt
-
 How deep should this trench be? What kind of sand goes over a high voltage line?
 
 I spent a good part of last summer not knowing the answer to questions like these. I was interning at Veitur, covering for a project manager so he could take his vacation without the whole project stopping for three weeks. The job was budget approvals, chasing permits, showing up to meetings. Most of it I could figure out. But every few days something like the trench question would land on me and I had no idea.

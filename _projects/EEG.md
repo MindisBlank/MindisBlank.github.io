@@ -8,7 +8,7 @@ Neurons in your brain pass electrical signals between each other, and the sum of
 
 Brain activity is sorted into bands. Beta, 14 to 30 Hz, is what you produce awake and working on something demanding. Alpha, 8 to 13 Hz, is awake and at rest. Theta, 4 to 7 Hz, is asleep. We went for alpha, partly because it is the easiest band to produce on demand by closing your eyes and doing nothing.
 
-![The brainwave bands](/assets/images/eeg/01-brainwave-bands.png)
+![The brainwave bands](/assets/images/EEG/01-brainwave-bands.png)
 
 So the circuit needs to pass 8 to 13 Hz and reject everything else: a high-pass above 8 Hz, a low-pass below 13 Hz, and a lot of gain to lift 15 µV somewhere a scope can see it. It also needs a notch at 50 Hz, because that is the mains frequency in Europe and the room is full of it.
 
@@ -18,9 +18,9 @@ We took a base design from an Instructables DIY EEG build and made three changes
 
 Then we put it into LTspice.
 
-![The original schematic in LTspice](/assets/images/eeg/02-original-schematic.png)
+![The original schematic in LTspice](/assets/images/EEG/02-original-schematic.png)
 
-![The original Bode simulation](/assets/images/eeg/03-original-bode.png)
+![The original Bode simulation](/assets/images/EEG/03-original-bode.png)
 *The 50 Hz notch is not in this plot. Simulating that stage on its own showed it working fine.*
 
 Here is the part worth writing down. The Bode plot of the full circuit did not show the 50 Hz notch doing anything. Simulating the notch stage by itself showed it working. Two simulations of the same circuit disagreeing with each other is a result, and the correct response is to find out which one is lying.
@@ -45,33 +45,33 @@ The answer took a lot of searching to find, and it is a component problem rather
 
 We rebuilt the notch and the low-pass around passive networks with ceramic and film capacitors instead.
 
-![The updated schematic](/assets/images/eeg/04-updated-schematic.png)
+![The updated schematic](/assets/images/EEG/04-updated-schematic.png)
 
-![The updated Bode simulation](/assets/images/eeg/05-updated-bode.png)
+![The updated Bode simulation](/assets/images/EEG/05-updated-bode.png)
 
 Ten Hz is a strange place to do analogue design. Most component behaviour you learn is quietly assuming you are somewhere in the audio band or above, and a lot of it stops being true below it. That is the whole lesson of the project, and it cost us most of the term.
 
 ## Sticking wires in my head
 
-![The finished build](/assets/images/eeg/06-final-build.png)
+![The finished build](/assets/images/EEG/06-final-build.png)
 
 The last step was two wires twisted together to reject common-mode noise, one end into the input of the circuit, the other end onto my scalp, at the occipital and temporal positions. It was slightly unpleasant. It did not matter.
 
-![Professor J](/assets/images/eeg/07-professor-j.png)
+![Professor J](/assets/images/EEG/07-professor-j.png)
 *Professor J.*
 
-![FFT of the measured brainwaves](/assets/images/eeg/08-fft-brainwaves.png)
+![FFT of the measured brainwaves](/assets/images/EEG/08-fft-brainwaves.png)
 
 There it is. Clear gain across 8 to 13 Hz, which is what the circuit was built to do.
 
 What surprised us was how much mains interference is still visible given how hard the notch attenuates at 50 Hz. So we measured the room instead of the circuit: FFT of the environment, with nothing running through the amplifier at all.
 
-![FFT of the ambient interference](/assets/images/eeg/09-fft-environment.png)
+![FFT of the ambient interference](/assets/images/EEG/09-fft-environment.png)
 *The 50 Hz peak is more than 60 dB above everything else in the room.*
 
 Sixty decibels is a factor of a thousand. The notch is doing a lot of work and there is still plenty left over, which reframes the problem: the interference is not a detail to clean up at the end, it is one of the largest signals in the system and the design has to be built around it. Moving the board further from the wall sockets cut it noticeably, which is a reminder that physical layout counts as circuit design.
 
-![Measured Bode plot of the circuit](/assets/images/eeg/10-measured-bode.png)
+![Measured Bode plot of the circuit](/assets/images/EEG/10-measured-bode.png)
 
 Last, a measured Bode plot using the scope's built-in sweep. It cannot start at 0 Hz, but from 10 Hz up the shape matches the simulation. The gain sits lower everywhere, almost certainly because the trim pot that sets the gain was at a different value than the one we simulated. The shape across the band we care about is the same.
 
