@@ -30,16 +30,17 @@ permalink: /about/
   </div>
   <div class="travel-lists">
     <div class="travel-era">
-      <h3>From Boston <span>until 2008</span></h3>
+      <h3>From Boston </h3>
       <ul>
         <li data-trip="toronto">Toronto</li>
         <li data-trip="philadelphia">Philadelphia</li>
         <li data-trip="nyc">New York City</li>
         <li data-trip="colorado">Colorado</li>
+        <li data-trip="washingtondc">Washington, D.C</li>
       </ul>
     </div>
     <div class="travel-era">
-      <h3>From Reykjavík <span>2008–2023</span></h3>
+      <h3>From Reykjavík </h3>
       <ul>
         <li data-trip="berlin">Berlin</li>
         <li data-trip="prague">Prague</li>
@@ -52,7 +53,7 @@ permalink: /about/
       </ul>
     </div>
     <div class="travel-era">
-      <h3>From Copenhagen <span>2024–2026</span></h3>
+      <h3>From Copenhagen </h3>
       <ul>
         <li data-trip="poland">Gdańsk · Warsaw</li>
         <li data-trip="tallinn">Tallinn</li>
@@ -61,7 +62,7 @@ permalink: /about/
       </ul>
     </div>
     <div class="travel-era">
-      <h3>From Stockholm <span>2026 –</span></h3>
+      <h3>From Stockholm </h3>
       <ul>
         <li class="travel-empty">Nothing yet — just landed.</li>
       </ul>

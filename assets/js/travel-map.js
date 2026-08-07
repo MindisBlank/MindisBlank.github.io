@@ -40,6 +40,7 @@
     { id: "philadelphia", from: 0, stops: [[39.95, -75.17]] },
     { id: "nyc",          from: 0, stops: [[40.71, -74.01]] },
     { id: "colorado",     from: 0, stops: [[39.74, -104.99]] },
+    { id: "washingtondc", from: 0, stops: [[38.90, -77.04]] },
     { id: "berlin",       from: 1, stops: [[52.52, 13.40]] },
     { id: "prague",       from: 1, stops: [[50.08, 14.44]] },
     { id: "copenhagen",   from: 1, stops: [[55.68, 12.57]], noDot: true },
