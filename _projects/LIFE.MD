@@ -15,7 +15,7 @@ links:
 
 LIFE stands for Lunar Infrastructure for Future Exploration. The assignment was to design a permanent lunar base end to end: habitat, radiation shielding, resource processing, rovers, a landing pad, power, communications, and the order it all arrives in.
 
-The purpose of the base shaped every design choice, so it is worth stating first. LIFE is not a mining outpost. Most current lunar programmes, NASA's Artemis included, aim for the south pole, where water ice makes propellant production and commercial return plausible. LIFE has a different goal: take the technologies a Mars settlement would depend on, most of which exist only as papers and prototypes at low technology readiness level (TRL, the scale used to grade how far a technology is from flight-proven), and run them on a real planetary surface until they either work or fail in an instructive way. The Moon is close enough to reach and harsh enough for the test to mean something.
+The purpose of the base shaped every design choice, so it is worth stating first. LIFE is not a mining outpost. Most current lunar programmes, NASA's Artemis included, aim for the south pole, where water ice makes propellant production and commercial return plausible. LIFE has a different goal: take the technologies a moon settlement would depend on, most of which exist only as papers and prototypes at low technology readiness level (TRL, the scale used to grade how far a technology is from flight-proven), and run them on a real planetary surface until they either work or fail in an instructive way. The Moon is close enough to reach and harsh enough for the test to mean something.
 
 That is also why the base sits near the equator instead of the pole. The terrain is simpler, the environment is well documented because the Apollo missions landed there, and nothing in the mission depends on water ice.
 
@@ -23,7 +23,7 @@ The mission runs in two phases. Phase 1 is the minimal working base: a solar far
 
 The design philosophy throughout is modularity with graded redundancy. Every system is built in stages, and each stage has to connect to the previous one without modifying it. Redundancy is assigned by consequence: the parts that keep people alive tolerate two simultaneous failures, the rest tolerate one or none. The arrival of the Phase 2 reactor is where both principles get tested.
 
-My part was power transmission and distribution, plus the surface communication network. Others generated the electricity or consumed it. I moved it, and the communication fibre ended up in the same trench as my cables.
+My part was power transmission and surface communication network. The others generated the electricity or consumed it.
 
 ## AC or DC
 
@@ -112,5 +112,3 @@ Phase 2 extends the fibre and adds nodes. The architecture does not change.
 ## What the report leaves open
 
 The report keeps a list of its own limitations, and my sections carry several. Grid protection and control got a baseline topology, not a design. There is no fatigue analysis of a cable thermally cycling through years of lunar days and nights, no electromagnetic interference modelling, no beam-steering algorithms, no antenna hardware design. The cable masses cover conductor and insulation only; connectors, bus bars and deployment hardware are not included, so the real figure is higher by an amount I cannot state.
-
-If I did it again I would start with fault protection instead of leaving it as a topology sketch. It is the one place where a lunar DC grid differs most from a terrestrial one, and it is the part I have the least to show for.
