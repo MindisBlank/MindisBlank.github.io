@@ -1,6 +1,8 @@
 ---
+layout: post
 title: "My attempt at deploying a RAG model and what I learnt"
 date: 2025-08-07
+summary: "A summer internship, a 140-page standards PDF, and what happened when I tried to put a retrieval-augmented LLM in front of it."
 ---
 
 # My attempt at deploying a RAG model and what I learnt
