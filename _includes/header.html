@@ -1,13 +1,39 @@
 <header class="site-header">
   <div class="container header-inner">
     <a class="brand" href="{{ '/' | relative_url }}" aria-label="{{ site.title }} — home">
-      <span class="mark" aria-hidden="true">
-        <span class="mark-shape mark-tri"></span>
-        <span class="mark-shape mark-circle"></span>
-        <span class="mark-shape mark-square"></span>
-      </span>
+      <svg class="logo day" id="logo-scene" viewBox="0 0 36 24" width="36" height="24" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="aurora-grad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#5aa87e"/>
+            <stop offset="1" stop-color="#4f7d99"/>
+          </linearGradient>
+          <mask id="moon-mask">
+            <rect x="0" y="0" width="36" height="24" fill="#fff"/>
+            <circle cx="27.6" cy="5.9" r="3.1" fill="#000"/>
+          </mask>
+        </defs>
+        <path class="logo-aurora logo-night-el" d="M3 7C9 2.5 13 9 19 5C23 2.3 29 4 33 3"/>
+        <g class="logo-celestial logo-sun"><circle cx="29" cy="7.5" r="3.4"/></g>
+        <g class="logo-celestial logo-moon logo-night-el"><circle cx="29" cy="7.5" r="3.4" mask="url(#moon-mask)"/></g>
+        <g class="logo-mountain">
+          <path class="logo-ridge" d="M14 20L21.5 11.5L29 20Z"/>
+          <path class="logo-face-shadow" d="M6 20L15 5.5L17 20Z"/>
+          <path class="logo-face-lit" d="M15 5.5L24 20L17 20Z"/>
+          <path class="logo-snow" d="M12.8 9.1L15 5.5L17.2 9.3L16.2 8.4L15.3 9.8L14.4 8.4L13.6 9.4Z"/>
+        </g>
+        <rect class="logo-ground" x="1" y="19.5" width="34" height="3.6" rx="1.8"/>
+      </svg>
       <span class="brand-name">{{ site.title }}</span>
     </a>
+    <script>
+      (function () {
+        var h = new Date().getHours();
+        if (h < 7 || h >= 19) {
+          var l = document.getElementById('logo-scene');
+          if (l) { l.classList.remove('day'); l.classList.add('night'); }
+        }
+      })();
+    </script>
     <nav class="site-nav" aria-label="Main">
       <a href="{{ '/projects/' | relative_url }}" {% if page.url contains '/projects' %}class="active"{% endif %}>Projects</a>
       <a href="{{ '/blog/' | relative_url }}" {% if page.url contains '/blog' %}class="active"{% endif %}>Blog</a>

@@ -59,50 +59,78 @@ body {
   letter-spacing: 0.01em;
 }
 
-/* Geometric mark — three shapes that snap into place on load */
-.mark {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 22px;
+/* Logo — a tiny Icelandic landscape. The sun arcs up from behind the
+   mountain by day; at night a moon, stars, and aurora take over
+   (class set by a small script in header.html from the visitor's clock). */
+.logo { display: block; }
+
+.logo-ground      { fill: var(--moss); }
+.logo-ridge       { fill: var(--stone); opacity: 0.55; } /* distant ridge, hazier */
+.logo-face-shadow { fill: #4b504a; }                     /* darker gray shade side */
+.logo-face-lit    { fill: #71766d; }                     /* gray sun-facing slope */
+.logo-snow        { fill: #dbe6ec; }
+
+/* Cooler, dimmer mountain after dark */
+.logo.night .logo-face-shadow { fill: #41463f; }
+.logo.night .logo-face-lit    { fill: #616659; }
+.logo.night .logo-snow        { fill: #c3d4de; }
+.logo-sun circle  { fill: var(--lichen); }
+.logo-moon circle { fill: var(--glacier); }
+.logo-aurora {
+  fill: none;
+  stroke: url(#aurora-grad);
+  stroke-width: 2;
+  stroke-linecap: round;
 }
 
-.mark-shape { display: inline-block; }
+.logo.day .logo-night-el { display: none; }
+.logo.night .logo-sun    { display: none; }
 
-.mark-tri {
-  width: 0;
-  height: 0;
-  border-left: 9px solid transparent;
-  border-right: 9px solid transparent;
-  border-bottom: 18px solid var(--moss);
-}
-
-.mark-circle {
-  width: 16px;
-  height: 8px;
-  border-radius: 16px 16px 0 0;
-  background: var(--glacier);
-}
-
-.mark-square {
-  width: 11px;
-  height: 11px;
-  background: var(--lichen);
-}
-
-/* Snap-in animation: staggered, quick, with a slight overshoot.
-   Runs once per page load. */
+/* Load animation: ground slides in, mountain pops up with an overshoot,
+   then the sun (or moon) arcs up from behind the ridge. Runs once. */
 @media (prefers-reduced-motion: no-preference) {
-  .mark-shape {
+  .logo-ground {
+    transform: translateX(-10px);
     opacity: 0;
-    animation: snap-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+    animation: logo-in 0.35s ease-out 0.05s forwards;
   }
-  .mark-tri    { animation-delay: 0.05s; transform: translateY(-14px); }
-  .mark-circle { animation-delay: 0.16s; transform: translateY(10px); }
-  .mark-square { animation-delay: 0.27s; transform: translateX(12px) rotate(45deg); }
 
-  @keyframes snap-in {
-    to { opacity: 1; transform: translate(0, 0) rotate(0); }
+  .logo-mountain {
+    transform: translateY(16px);
+    opacity: 0;
+    animation: logo-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.15s forwards;
+  }
+
+  .logo-celestial {
+    transform: translate(-13px, 11px) scale(0.6);
+    opacity: 0;
+    animation: logo-arc 0.65s ease-out 0.45s forwards;
+  }
+
+  .logo-aurora {
+    stroke-dasharray: 42;
+    stroke-dashoffset: 42;
+    animation: logo-draw 0.9s ease-out 0.55s forwards,
+               logo-shimmer 6s ease-in-out 2.5s infinite;
+  }
+
+  @keyframes logo-in {
+    to { opacity: 1; transform: none; }
+  }
+
+  @keyframes logo-arc {
+    0%   { opacity: 0; transform: translate(-13px, 11px) scale(0.6); }
+    30%  { opacity: 1; }
+    60%  { transform: translate(-5.5px, -1.5px) scale(0.95); }
+    100% { opacity: 1; transform: none; }
+  }
+
+  @keyframes logo-draw {
+    to { stroke-dashoffset: 0; }
+  }
+
+  @keyframes logo-shimmer {
+    50% { opacity: 0.5; }
   }
 
   /* Page content fades up subtly, no scroll trickery */
