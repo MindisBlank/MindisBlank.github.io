@@ -1,6 +1,10 @@
 ---
 layout: default
 ---
+{% if page.external_url %}
+<meta http-equiv="refresh" content="0; url={{ page.external_url }}">
+<p>Redirecting to <a href="{{ page.external_url }}">{{ page.external_url }}</a>&hellip;</p>
+{% else %}
 <article>
   <h1>{{ page.title }}</h1>
   <p class="page-meta">
@@ -12,3 +16,4 @@ layout: default
   </p>
   {{ content }}
 </article>
+{% endif %}
