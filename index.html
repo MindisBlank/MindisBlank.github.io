@@ -20,7 +20,11 @@ layout: default
         {% endif %}
         <time datetime="{{ item.date | date_to_xmlschema }}">{{ item.date | date: "%B %-d, %Y" }}</time>
       </div>
+      {% if item.external_url %}
+      <h3><a href="{{ item.external_url }}" target="_blank" rel="noopener">{{ item.title }} &#8599;</a></h3>
+      {% else %}
       <h3><a href="{{ item.url | relative_url }}">{{ item.title }}</a></h3>
+      {% endif %}
       <p>{{ item.summary | default: item.excerpt | strip_html | truncate: 140 }}</p>
     </li>
     {% endfor %}

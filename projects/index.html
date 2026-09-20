@@ -11,7 +11,11 @@ permalink: /projects/
     <div class="feed-meta">
       <time datetime="{{ project.date | date_to_xmlschema }}">{{ project.date | date: "%B %Y" }}</time>
     </div>
+    {% if project.external_url %}
+    <h3><a href="{{ project.external_url }}" target="_blank" rel="noopener">{{ project.title }} &#8599;</a></h3>
+    {% else %}
     <h3><a href="{{ project.url | relative_url }}">{{ project.title }}</a></h3>
+    {% endif %}
     <p>{{ project.summary | default: project.excerpt | strip_html | truncate: 140 }}</p>
   </li>
   {% endfor %}
